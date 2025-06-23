@@ -293,7 +293,7 @@ export const navigationData = {
     role: 'Content Creator & Reviewer',
     email: 'wydanhdu@gmail.com',
     availability: {
-      status: 'Sẵn sàng',
+      status: 'Đang hạnh phúc',
       color: 'green'
     }
   }
@@ -303,7 +303,7 @@ export const navigationData = {
 export const footerData = {
   heading: "LET'S CHAT",
   availability: {
-    status: 'Sẵn sàng',
+    status: 'Đang hạnh phúc',
     color: 'green'
   },
   social: [

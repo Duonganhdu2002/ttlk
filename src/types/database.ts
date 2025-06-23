@@ -33,6 +33,7 @@ export interface Database {
       products: {
         Row: {
           id: string
+          name: string
           image_url: string
           price: number
           product_link: string
@@ -42,6 +43,7 @@ export interface Database {
         }
         Insert: {
           id?: string
+          name: string
           image_url: string
           price: number
           product_link: string
@@ -51,6 +53,7 @@ export interface Database {
         }
         Update: {
           id?: string
+          name?: string
           image_url?: string
           price?: number
           product_link?: string

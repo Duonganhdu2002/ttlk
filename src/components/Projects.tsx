@@ -249,7 +249,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, index, isOdd }) => {
               <div className="aspect-[4/3] w-full relative">
                 <img 
                   src={product.image_url} 
-                  alt={`Sản phẩm ${product.id}`}
+                  alt={product.name || `Sản phẩm ${product.id}`}
                   className="w-full h-full object-cover"
                 />
                 <div className="image-overlay absolute top-0 left-0 w-full h-full bg-background z-10"></div>
@@ -262,9 +262,10 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, index, isOdd }) => {
           <a href={product.product_link} target="_blank" rel="noopener noreferrer">
             <div className={`text-center md:text-left ${isOdd ? 'md:text-right' : ''} cursor-pointer group`}>
               <h3 className="project-title text-4xl sm:text-5xl lg:text-7xl font-medium mb-4 transition-colors duration-300">
-                {formatPrice(product.price)}
+                {product.name || 'Sản phẩm không có tên'}
               </h3>
               <div className="project-info flex flex-col text-gray-500 text-base sm:text-lg">
+                <p className="text-2xl font-semibold text-black mb-2">{formatPrice(product.price)}</p>
                 <p>{product.categories?.name || 'Chưa phân loại'}</p>
               </div>
             </div>

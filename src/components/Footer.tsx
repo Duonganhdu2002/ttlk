@@ -94,7 +94,7 @@ const Footer = () => {
 
           {/* Availability */}
           <div>
-            <div className="text-sm font-semibold mb-2 mt-6">Trạng thái sống</div>
+            <div className="text-sm font-semibold mb-2 mt-6">Trạng thái</div>
             <div className="text-sm flex items-center gap-2">
               <span className={`text-${footerData.availability.color}-400 text-lg`}>●</span>
               <span>{footerData.availability.status}</span>

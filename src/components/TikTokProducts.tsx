@@ -333,11 +333,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
     >
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden">
-{product.image_url && (product.image_url.includes('ibyteing.com') || product.image_url.includes('ibyteimg.com')) ? (
+        {product.image_url && (product.image_url.includes('ibyteing.com') || product.image_url.includes('ibyteimg.com')) ? (
           // Use regular img for external TikTok images to avoid Next.js optimization issues
           <img
             src={product.image_url}
-            alt={`Sản phẩm TikTok`}
+            alt={product.name || 'Sản phẩm TikTok'}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
@@ -348,7 +348,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
           // Use Next.js Image for optimized images
           <Image
             src={product.image_url || '/images/placeholder-product.jpg'}
-            alt={`Sản phẩm TikTok`}
+            alt={product.name || 'Sản phẩm TikTok'}
             fill
             style={{ objectFit: 'cover' }}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -392,7 +392,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
       <div className="p-5">
         {/* Product Title */}
         <h5 className="font-medium text-lg mb-4 text-black group-hover:text-gray-600 transition-colors">
-          {product.categories?.name || 'Sản phẩm'}
+          {product.name || 'Sản phẩm không có tên'}
         </h5>
 
         {/* Price - Main focus */}

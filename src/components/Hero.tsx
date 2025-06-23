@@ -64,12 +64,12 @@ const Hero = () => {
         {/* Availability container */}
         <div className="mt-16 text-xs text-gray-500 space-y-1 text-center md:absolute md:left-6 md:bottom-6 md:text-left">
           <div className="overflow-hidden">
-            <div className="font-semibold text-black animate-text">Trạng thái sống</div>
+            <div className="font-semibold text-black animate-text">Trạng thái</div>
           </div>
           <div className="overflow-hidden">
             <div className="flex items-center gap-2 justify-center md:justify-start animate-text">
               <span className="text-green-400 text-base">●</span>
-              <span className="text-gray-400">Sẵn sàng</span>
+              <span className="text-gray-400">Đang hạnh phúc</span>
             </div>
           </div>
         </div>

@@ -165,7 +165,7 @@ const Header = () => {
 
           {/* Availability status */}
           <div className="text-right text-[11px] mt-4">
-            <span className="text-white font-semibold">Trạng thái sống</span><br />
+            <span className="text-white font-semibold">Trạng thái</span><br />
             <span className={`text-${navigationData.contact.availability.color}-400 mr-1`}>●</span>
             <span>{navigationData.contact.availability.status}</span>
           </div>
