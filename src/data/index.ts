@@ -290,7 +290,7 @@ export const navigationData = {
   ],
   contact: {
     name: 'WYDANHDU',
-    role: 'Content Creator & Reviewer',
+    role: 'Content Creator & Coder',
     email: 'wydanhdu@gmail.com',
     availability: {
       status: 'Đang hạnh phúc',

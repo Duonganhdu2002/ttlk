@@ -16,7 +16,7 @@ const Abilities = () => {
       {/* Desktop layout with flex, Mobile layout with block */}
       <div className="flex flex-col md:flex-row items-start">
         {/* Heading - Takes full width on mobile, fixed width on desktop */}
-        <h2 className="text-6xl sm:text-7xl md:text-[6vw] lg:text-[6vw] tracking-tight md:w-[40%] mb-8 md:mb-0 md:sticky md:top-24">
+        <h2 className="font-bold text-4xl sm:text-7xl md:text-[6vw] lg:text-[6vw] tracking-tight md:w-[40%] mb-8 md:mb-0 md:sticky md:top-24">
           NHẮN GỬI
         </h2>
         

@@ -165,18 +165,18 @@ const TikTokProducts: React.FC = () => {
     <section className="w-full bg-stripes md:bg-stripes-desktop px-[4%] sm:px-[5%] md:px-[6%] lg:px-[8%] py-16 sm:py-20 md:py-24 bg-white text-black overflow-hidden">
       {/* Header */}
       <div ref={headerRef} className="mb-12 md:mb-16">
-        <h2 className="text-6xl sm:text-7xl md:text-[6vw] lg:text-[6vw] tracking-tight mb-4">
-          GIỎ HÀNG CỦA TUI
+        <h2 className="text-4xl sm:text-7xl md:text-[6vw] lg:text-[6vw] tracking-tight mb-4 font-bold">
+          GIỎ HÀNG
         </h2>
         
       </div>
 
       {/* Category Navigation */}
-      <div className="mb-8 md:mb-12">
-        <div className="flex flex-wrap gap-2 md:gap-3">
+      <div className="mb-6 md:mb-8">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => handleCategoryChange('all')}
-            className={`px-5 py-2 rounded font-medium transition-all duration-300 border ${
+            className={`px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 border ${
               activeCategory === 'all'
                 ? 'bg-black text-white border-black'
                 : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
@@ -188,7 +188,7 @@ const TikTokProducts: React.FC = () => {
             <button
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
-              className={`px-5 py-2 rounded font-medium transition-all duration-300 border ${
+              className={`px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 border ${
                 activeCategory === category.id
                   ? 'bg-black text-white border-black'
                   : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
@@ -202,21 +202,11 @@ const TikTokProducts: React.FC = () => {
 
       {/* Category Description */}
       {activeCategory !== 'all' && (
-        <div className="mb-8 md:mb-12">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            <div className="relative w-full md:w-32 h-32 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-              <span className="text-4xl font-bold text-gray-400">
-                {categories.find(cat => cat.id === activeCategory)?.name.charAt(0)}
-              </span>
-            </div>
-            <div>
-              <h4 className="text-2xl md:text-3xl font-bold mb-2">
-                {categories.find(cat => cat.id === activeCategory)?.name}
-              </h4>
-              <p className="text-gray-600 text-lg">
-                Sản phẩm trong danh mục này
-              </p>
-            </div>
+        <div className="mb-6 md:mb-8">
+          <div>
+            <h4 className="text-gray-600 text-lg">
+              Sản phẩm của <span className="font-bold text-gray-600">{categories.find(cat => cat.id === activeCategory)?.name}</span>
+            </h4>
           </div>
         </div>
       )}
@@ -224,9 +214,6 @@ const TikTokProducts: React.FC = () => {
       {/* Products Info */}
       {filteredProducts.length > 0 && (
         <div className="mb-6 flex justify-between items-center text-sm text-gray-600">
-          <span>
-            Hiển thị {startIndex + 1}-{Math.min(endIndex, filteredProducts.length)} của {filteredProducts.length} sản phẩm
-          </span>
           <span>
             Trang {currentPage} / {totalPages}
           </span>
@@ -327,12 +314,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
 
   return (
     <div 
-      className="product-card bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group"
+      className="product-card bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group flex items-center p-4"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Product Image */}
-      <div className="relative aspect-square overflow-hidden">
+      {/* Product Image - Left side, smaller */}
+      <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 mr-4">
         {product.image_url && (product.image_url.includes('ibyteing.com') || product.image_url.includes('ibyteimg.com')) ? (
           // Use regular img for external TikTok images to avoid Next.js optimization issues
           <img
@@ -351,7 +338,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
             alt={product.name || 'Sản phẩm TikTok'}
             fill
             style={{ objectFit: 'cover' }}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes="96px"
             className="transition-transform duration-300 group-hover:scale-110"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
@@ -360,14 +347,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
           />
         )}
         
-        {/* Category Badge */}
-        {product.categories && (
-          <div className="absolute top-3 left-3 bg-white text-black px-3 py-1 rounded text-xs font-medium border border-gray-200">
-            {product.categories.name}
-          </div>
-        )}
-
-        {/* Overlay with button */}
+        {/* Overlay with button for small image */}
         <div className={`absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center transition-opacity duration-300 ${
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}>
@@ -376,35 +356,40 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
               href={product.product_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white text-black px-8 py-3 rounded font-medium hover:bg-gray-100 transition-colors duration-200 border border-gray-200"
+              className="bg-white text-black px-2 py-1 rounded text-xs font-medium hover:bg-gray-100 transition-colors duration-200"
             >
-              Mua Ngay
+              Mua
             </a>
           ) : (
-            <div className="text-white text-sm text-center px-4">
-              Đang cập nhật...
+            <div className="text-white text-xs text-center">
+              N/A
             </div>
           )}
         </div>
       </div>
 
-      {/* Product Info */}
-      <div className="p-5">
+      {/* Product Info - Right side */}
+      <div className="flex-1 min-w-0">
         {/* Product Title */}
-        <h5 className="font-medium text-lg mb-4 text-black group-hover:text-gray-600 transition-colors">
+        <h5 className="font-medium text-sm mb-2 text-black group-hover:text-gray-600 transition-colors line-clamp-2">
           {product.name || 'Sản phẩm không có tên'}
         </h5>
 
-        {/* Price - Main focus */}
-        <div className="mb-4">
-          <span className="text-2xl font-bold text-black">
+        {/* Price and Category */}
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-lg font-bold text-black">
             {formatPrice(product.price || 0)}
           </span>
+          {product.categories && (
+            <span className="px-2 py-1 bg-gray-50 text-gray-700 text-xs rounded font-medium">
+              {product.categories.name}
+            </span>
+          )}
         </div>
 
-        {/* Product Link Preview */}
-        <div className="mb-4">
-          <p className="text-gray-400 text-xs truncate font-mono">
+        {/* Product Link Preview and ID */}
+        <div className="flex items-center justify-between text-xs text-gray-400">
+          <p className="truncate font-mono flex-1 mr-2">
             {product.product_link ? (() => {
               try {
                 return new URL(product.product_link).hostname;
@@ -413,14 +398,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
               }
             })() : 'tiktok.com'}
           </p>
-        </div>
-
-        {/* Bottom row */}
-        <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-          <span className="px-2 py-1 bg-gray-50 text-gray-700 text-xs rounded font-medium">
-            {product.categories?.name || 'Product'}
-          </span>
-          <span className="text-xs text-gray-400 font-mono">
+          <span className="font-mono flex-shrink-0">
             #{product.id.slice(-6)}
           </span>
         </div>
