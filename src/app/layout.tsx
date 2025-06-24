@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TTLK - TikTok Live Kiếm",
-  description: "Nền tảng affiliate marketing TikTok chất lượng cao với các sản phẩm hot trend",
+  title: "Giỏ hàng của Ăn bậy nói bạ",
+  description: "Giỏ hàng của Ăn bậy nói bạ",
 };
 
 export default function RootLayout({
