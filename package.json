@@ -12,6 +12,7 @@
   "dependencies": {
     "@studio-freight/react-lenis": "^0.0.47",
     "@supabase/supabase-js": "2.50.0",
+    "@vercel/analytics": "1.5.0",
     "framer-motion": "^12.6.5",
     "gsap": "^3.12.7",
     "locomotive-scroll": "^4.1.4",
