@@ -23,8 +23,10 @@ const TikTokProducts: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const containerRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLDivElement | null>(null);
+  const searchRef = useRef<HTMLDivElement | null>(null);
 
   const ITEMS_PER_PAGE = 12;
 
@@ -51,10 +53,18 @@ const TikTokProducts: React.FC = () => {
     loadData();
   }, []);
 
-  // Filter products based on active category
-  const filteredProducts = activeCategory === 'all' 
-    ? products 
-    : products.filter(product => product.category_id === activeCategory);
+  // Filter products based on active category and search query
+  const filteredProducts = products.filter(product => {
+    // Filter by category
+    const categoryMatch = activeCategory === 'all' || product.category_id === activeCategory;
+    
+    // Filter by search query
+    const searchMatch = searchQuery.trim() === '' || 
+      product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.categories?.name?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return categoryMatch && searchMatch;
+  });
 
   // Pagination logic
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -65,6 +75,12 @@ const TikTokProducts: React.FC = () => {
   // Reset to page 1 when category changes
   const handleCategoryChange = (categoryId: string) => {
     setActiveCategory(categoryId);
+    setCurrentPage(1);
+  };
+
+  // Handle search query change
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
     setCurrentPage(1);
   };
 
@@ -83,13 +99,35 @@ const TikTokProducts: React.FC = () => {
     if (headerRef.current) {
       gsap.fromTo(
         headerRef.current,
-        { opacity: 0, y: 50 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          duration: 1,
+          duration: 0.5,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: headerRef.current,
+            start: 'top 90%',
+            end: 'bottom 20%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    }
+
+    // Animation for search bar
+    if (searchRef.current) {
+      gsap.fromTo(
+        searchRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          delay: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: searchRef.current,
             start: 'top 90%',
             end: 'bottom 20%',
             toggleActions: 'play none none none',
@@ -104,13 +142,14 @@ const TikTokProducts: React.FC = () => {
       cards.forEach((card, index) => {
         gsap.fromTo(
           card,
-          { opacity: 0, y: 30, scale: 0.95 },
+          { opacity: 0, y: 20, scale: 0.98 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.6,
-            delay: index * 0.1,
+            duration: 0.3,
+            delay: index * 0.05,
+            ease: "power2.out",
             scrollTrigger: {
               trigger: card,
               start: 'top 95%',
@@ -121,7 +160,7 @@ const TikTokProducts: React.FC = () => {
         );
       });
     }
-  }, [currentProducts]);
+  }, [currentProducts, searchQuery]);
 
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat('vi-VN', {
@@ -164,19 +203,56 @@ const TikTokProducts: React.FC = () => {
   return (
     <section className="w-full bg-stripes md:bg-stripes-desktop px-[4%] sm:px-[5%] md:px-[6%] lg:px-[8%] py-16 sm:py-20 md:py-24 bg-white text-black overflow-hidden">
       {/* Header */}
-      <div ref={headerRef} className="mb-12 md:mb-16">
+      <div ref={headerRef} className="mb-8 md:mb-12">
         <h2 className="text-4xl sm:text-7xl md:text-[6vw] lg:text-[6vw] tracking-tight mb-4 font-bold">
           GIỎ HÀNG
         </h2>
-        
       </div>
 
-      {/* Category Navigation */}
-      <div className="mb-6 md:mb-8">
-        <div className="flex flex-wrap gap-2">
+      {/* Search Bar - Mobile Optimized */}
+      <div ref={searchRef} className="mb-6 sm:mb-8 md:mb-10">
+        <div className="relative max-w-full sm:max-w-md mx-auto group">
+          <div className="absolute inset-y-0 left-3 sm:left-4 flex items-center pointer-events-none">
+            <svg 
+              className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-focus-within:text-gray-600 transition-colors duration-150" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+              />
+            </svg>
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            placeholder="Tìm kiếm sản phẩm..."
+            className="w-full pl-10 sm:pl-12 pr-12 sm:pr-14 py-2.5 sm:py-3 border border-gray-200 rounded-full bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg text-sm sm:text-base touch-manipulation"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => handleSearchChange('')}
+              className="absolute inset-y-0 right-3 sm:right-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-150 touch-manipulation p-1"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Category Navigation - Mobile Optimized */}
+      <div className="mb-4 sm:mb-6 md:mb-8">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2">
           <button
             onClick={() => handleCategoryChange('all')}
-            className={`px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 border ${
+            className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded text-xs sm:text-sm font-medium transition-all duration-150 border touch-manipulation ${
               activeCategory === 'all'
                 ? 'bg-black text-white border-black'
                 : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
@@ -188,7 +264,7 @@ const TikTokProducts: React.FC = () => {
             <button
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
-              className={`px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 border ${
+              className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded text-xs sm:text-sm font-medium transition-all duration-150 border touch-manipulation ${
                 activeCategory === category.id
                   ? 'bg-black text-white border-black'
                   : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400 hover:bg-gray-50'
@@ -200,13 +276,21 @@ const TikTokProducts: React.FC = () => {
         </div>
       </div>
 
-      {/* Category Description */}
-      {activeCategory !== 'all' && (
+      {/* Search and Category Results Summary */}
+      {(searchQuery.trim() || activeCategory !== 'all') && (
         <div className="mb-6 md:mb-8">
-          <div>
-            <h4 className="text-gray-600 text-lg">
-              Sản phẩm của <span className="font-bold text-gray-600">{categories.find(cat => cat.id === activeCategory)?.name}</span>
-            </h4>
+          <div className="flex flex-wrap items-center gap-2 text-gray-600">
+            {searchQuery.trim() && (
+              <span className="text-lg">
+                Kết quả tìm kiếm cho: <span className="font-bold text-black">"{searchQuery}"</span>
+              </span>
+            )}
+            {searchQuery.trim() && activeCategory !== 'all' && <span className="text-gray-400">•</span>}
+            {activeCategory !== 'all' && (
+              <span className="text-lg">
+                Trong danh mục: <span className="font-bold text-black">{categories.find(cat => cat.id === activeCategory)?.name}</span>
+              </span>
+            )}
           </div>
         </div>
       )}
@@ -223,11 +307,24 @@ const TikTokProducts: React.FC = () => {
       {/* Products Grid */}
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">Không có sản phẩm nào trong danh mục này</p>
+          <p className="text-gray-500 text-lg">
+            {searchQuery.trim() 
+              ? `Không tìm thấy sản phẩm nào cho "${searchQuery}"`
+              : 'Không có sản phẩm nào trong danh mục này'
+            }
+          </p>
+          {searchQuery.trim() && (
+            <button
+              onClick={() => handleSearchChange('')}
+              className="mt-4 px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-150"
+            >
+              Xóa tìm kiếm
+            </button>
+          )}
         </div>
       ) : (
         <>
-          <div ref={containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 mb-8">
+          <div ref={containerRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-8">
             {currentProducts.map((product) => (
               <ProductCard key={product.id} product={product} formatPrice={formatPrice} />
             ))}
@@ -235,12 +332,12 @@ const TikTokProducts: React.FC = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center space-x-2 mt-8">
+            <div className="flex justify-center items-center space-x-1 sm:space-x-2 mt-6 sm:mt-8">
               {/* Previous Button */}
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`px-4 py-2 rounded border transition-colors ${
+                className={`px-3 sm:px-4 py-2 rounded border transition-colors duration-150 touch-manipulation ${
                   currentPage === 1
                     ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                     : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
@@ -273,7 +370,7 @@ const TikTokProducts: React.FC = () => {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`px-4 py-2 rounded border font-medium transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded border font-medium transition-colors duration-150 touch-manipulation text-sm sm:text-base ${
                       currentPage === page
                         ? 'bg-black text-white border-black'
                         : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
@@ -288,7 +385,7 @@ const TikTokProducts: React.FC = () => {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`px-4 py-2 rounded border transition-colors ${
+                className={`px-3 sm:px-4 py-2 rounded border transition-colors duration-150 touch-manipulation ${
                   currentPage === totalPages
                     ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                     : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
@@ -310,16 +407,21 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const handleProductClick = () => {
+    if (product.product_link) {
+      window.open(product.product_link, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <div 
-      className="product-card bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group flex items-center p-4"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`product-card bg-white rounded-lg border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-1 group flex items-center p-3 sm:p-4 touch-manipulation ${
+        product.product_link ? 'cursor-pointer active:scale-[0.98]' : 'cursor-default'
+      }`}
+      onClick={handleProductClick}
     >
-      {/* Product Image - Left side, smaller */}
-      <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 mr-4">
+      {/* Product Image - Left side, optimized for mobile */}
+      <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 mr-3 sm:mr-4">
         {product.image_url && (product.image_url.includes('ibyteing.com') || product.image_url.includes('ibyteimg.com')) ? (
           // Use regular img for external TikTok images to avoid Next.js optimization issues
           <img
@@ -338,57 +440,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, formatPrice }) => {
             alt={product.name || 'Sản phẩm TikTok'}
             fill
             style={{ objectFit: 'cover' }}
-            sizes="96px"
-            className="transition-transform duration-300 group-hover:scale-110"
+            sizes="(max-width: 640px) 80px, 96px"
+            className="transition-transform duration-200 group-hover:scale-110"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = '/images/placeholder-product.jpg';
             }}
           />
         )}
-        
-        {/* Overlay with button for small image */}
-        <div className={`absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center transition-opacity duration-300 ${
-          isHovered ? 'opacity-100' : 'opacity-0'
-        }`}>
-          {product.product_link ? (
-            <a
-              href={product.product_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-black px-2 py-1 rounded text-xs font-medium hover:bg-gray-100 transition-colors duration-200"
-            >
-              Mua
-            </a>
-          ) : (
-            <div className="text-white text-xs text-center">
-              N/A
-            </div>
-          )}
-        </div>
+
       </div>
 
-      {/* Product Info - Right side */}
+      {/* Product Info - Right side, mobile optimized */}
       <div className="flex-1 min-w-0">
         {/* Product Title */}
-        <h5 className="font-medium text-sm mb-2 text-black group-hover:text-gray-600 transition-colors line-clamp-2">
+        <h5 className="font-medium text-sm sm:text-base mb-1.5 sm:mb-2 text-black group-hover:text-gray-600 transition-colors duration-150 line-clamp-2 leading-tight">
           {product.name || 'Sản phẩm không có tên'}
         </h5>
 
         {/* Price and Category */}
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-lg font-bold text-black">
+        <div className="flex items-start sm:items-center justify-between mb-1.5 sm:mb-2 flex-col sm:flex-row gap-1 sm:gap-0">
+          <span className="text-base sm:text-lg font-bold text-black">
             {formatPrice(product.price || 0)}
           </span>
           {product.categories && (
-            <span className="px-2 py-1 bg-gray-50 text-gray-700 text-xs rounded font-medium">
+            <span className="px-2 py-0.5 bg-gray-50 text-gray-700 text-xs rounded font-medium self-start sm:self-auto">
               {product.categories.name}
             </span>
           )}
         </div>
 
-        {/* Product Link Preview and ID */}
-        <div className="flex items-center justify-between text-xs text-gray-400">
+        {/* Product Link Preview and ID - Hidden on small mobile */}
+        <div className="hidden xs:flex items-center justify-between text-xs text-gray-400">
           <p className="truncate font-mono flex-1 mr-2">
             {product.product_link ? (() => {
               try {
